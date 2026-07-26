@@ -8,8 +8,14 @@ load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("gemini-2.5-flash")
 
+model = genai.GenerativeModel(
+    "gemini-2.5-flash",
+    generation_config={
+        "response_mime_type": "application/json",
+        "temperature": 0.2,
+    }
+)
 
 def analyze_resume(prompt):
 
@@ -20,16 +26,12 @@ def analyze_resume(prompt):
     print(response.text)
     print("=" * 100 + "\n")
 
-    text = response.text.strip()
-
-    # Remove markdown if Gemini ever returns it
-    text = text.replace("```json", "")
-    text = text.replace("```", "").strip()
-
+    return response.text
     try:
-        return json.loads(text)
+        return json.loads(response.text)
 
     except Exception:
+        print(response.text)
 
         return {
             "ats_score": 0,
@@ -39,5 +41,5 @@ def analyze_resume(prompt):
             "missing_skills": [],
             "recommendations": [],
             "interview_questions": [],
-            "raw_response": text
+            "raw_response": response.text
         }

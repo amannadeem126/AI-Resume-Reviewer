@@ -59,7 +59,7 @@ if uploaded_file is not None:
 
     # Extract text
     resume_text = extract_text_from_pdf(uploaded_file)
-
+    resume_text = resume_text[:6000]
     filename = get_filename(uploaded_file)
     word_count = count_words(resume_text)
     character_count = count_characters(resume_text)
